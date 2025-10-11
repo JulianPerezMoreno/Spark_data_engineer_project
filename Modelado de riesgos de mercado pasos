@@ -1,0 +1,38 @@
+- Tasas de interés de referencia del Banco Central Europeo (BCE)
+- Índice Euro Stoxx 50
+
+3. Extracción con Spark:
+
+Una vez que hayas identificado los datos, puedes usar Spark para extraerlos de Eurostat. Aquí tienes un ejemplo de cómo podrías hacerlo:
+
+python
+
+Copiar
+from pyspark.sql import SparkSession
+import requests
+import pandas as pd
+
+# Inicializa la sesión de Spark
+spark = SparkSession.builder.appName("EurostatData").getOrCreate()
+
+# URL de la API de Eurostat (ejemplo)
+url = "https://ec.europa.eu/eurostat/sdmx/rest/data/TEN_BUS_FIN_A/EUR/DEP_RDP_GVA?format=csv"
+
+# Descarga los datos
+response = requests.get(url)
+response.raise_for_status()  # Lanza una excepción si hay un error
+
+# Lee los datos con pandas
+df_pandas = pd.read_csv(response.text, sep=';')
+
+# Convierte el DataFrame de pandas a un DataFrame de Spark
+df_spark = spark.createDataFrame(df_pandas)
+
+# Muestra los datos
+df_spark.show()
+4. Siguientes Pasos:
+
+Limpieza de Datos: Eliminar columnas irrelevantes, convertir tipos de datos, manejar valores faltantes.
+Ingeniería de Características: Crear nuevas variables a partir de las existentes (ej., tasas de crecimiento del PIB).
+Modelado de Riesgos: Aplicar técnicas de modelado de riesgos (ej., Value at Risk - VaR, Expected Shortfall - ES).
+
