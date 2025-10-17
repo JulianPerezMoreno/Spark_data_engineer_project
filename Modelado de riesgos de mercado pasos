@@ -35,4 +35,3 @@ df_spark.show()
 Limpieza de Datos: Eliminar columnas irrelevantes, convertir tipos de datos, manejar valores faltantes.
 Ingeniería de Características: Crear nuevas variables a partir de las existentes (ej., tasas de crecimiento del PIB).
 Modelado de Riesgos: Aplicar técnicas de modelado de riesgos (ej., Value at Risk - VaR, Expected Shortfall - ES).
-
