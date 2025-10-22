@@ -1,4 +1,6 @@
-- Tasas de interés de referencia del Banco Central Europeo (BCE)
+- Tasas de interés de referencia del Banco Central Europeo (BCE): Data recogido aqui:
+https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html
+https://data.ecb.europa.eu/data/datasets/IRS?dataset%5B0%5D=Long-term%20interest%20rate%20statistics%20%28IRS%29&advFilterDataset%5B0%5D=Long-term%20interest%20rate%20statistics%20%28IRS%29
 - Índice Euro Stoxx 50
 
 3. Extracción con Spark:
