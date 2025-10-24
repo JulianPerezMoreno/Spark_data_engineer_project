@@ -1,7 +1,8 @@
 - Tasas de interés de referencia del Banco Central Europeo (BCE): Data recogido aqui:
 https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html
 https://data.ecb.europa.eu/data/datasets/IRS?dataset%5B0%5D=Long-term%20interest%20rate%20statistics%20%28IRS%29&advFilterDataset%5B0%5D=Long-term%20interest%20rate%20statistics%20%28IRS%29
-- Índice Euro Stoxx 50
+- Índice Euro Stoxx 50:
+Downloaded from https://finance.yahoo.com/quote/%5ESTOXX50E/history/?period1=1420070400&period2=1761177600
 
 3. Extracción con Spark:
 
@@ -37,3 +38,71 @@ df_spark.show()
 Limpieza de Datos: Eliminar columnas irrelevantes, convertir tipos de datos, manejar valores faltantes.
 Ingeniería de Características: Crear nuevas variables a partir de las existentes (ej., tasas de crecimiento del PIB).
 Modelado de Riesgos: Aplicar técnicas de modelado de riesgos (ej., Value at Risk - VaR, Expected Shortfall - ES).
+
+
+
+Otro paso o ejemplo:
+
+ejemplo de script en PySpark que puedes adaptar para tu proyecto de Modelado de Riesgos de Mercado usando datos descargados desde STOXX.com. Este script asume que ya tienes el archivo histórico (por ejemplo, h_sx5e.txt) descargado con autenticación vía curl o SFTP.
+
+⚙️ Script PySpark para cálculo de métricas de riesgo
+python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, lag, stddev, avg, max, min
+from pyspark.sql.window import Window
+
+# 1️⃣ Inicializa Spark
+spark = SparkSession.builder \
+    .appName("EuroStoxx50_RiskModeling") \
+    .getOrCreate()
+
+# 2️⃣ Carga el archivo histórico descargado desde STOXX
+# Asume formato delimitado por tabulaciones o comas
+df = spark.read.csv("h_sx5e.txt", sep="\t", header=True, inferSchema=True)
+
+# 3️⃣ Limpieza y selección de columnas relevantes
+df_clean = df.select(
+    col("Date").cast("date"),
+    col("Close").cast("double")
+).dropna()
+
+# 4️⃣ Cálculo de retornos diarios
+windowSpec = Window.orderBy("Date")
+df_returns = df_clean.withColumn("PrevClose", lag("Close").over(windowSpec))
+df_returns = df_returns.withColumn("Return", (col("Close") - col("PrevClose")) / col("PrevClose"))
+
+# 5️⃣ Volatilidad histórica (desviación estándar de retornos)
+volatility = df_returns.select(stddev("Return").alias("Volatility")).collect()[0]["Volatility"]
+
+# 6️⃣ Drawdown máximo
+df_returns = df_returns.withColumn("RollingMax", max("Close").over(windowSpec))
+df_returns = df_returns.withColumn("Drawdown", (col("Close") - col("RollingMax")) / col("RollingMax"))
+max_drawdown = df_returns.select(min("Drawdown").alias("MaxDrawdown")).collect()[0]["MaxDrawdown"]
+
+# 7️⃣ Value at Risk (VaR) paramétrico al 95%
+mean_return = df_returns.select(avg("Return")).collect()[0][0]
+std_return = df_returns.select(stddev("Return")).collect()[0][0]
+VaR_95 = mean_return - 1.65 * std_return
+
+# 8️⃣ Resultados
+print(f"Volatilidad histórica: {volatility:.4f}")
+print(f"Drawdown máximo: {max_drawdown:.4f}")
+print(f"VaR 95% paramétrico: {VaR_95:.4f}")
+📦 Estructura del proyecto como entregable técnico
+🔹 Carpeta data/
+h_sx5e.txt → histórico del índice
+
+composition.csv → composición actual del índice (opcional)
+
+🔹 Carpeta notebooks/
+Exploración inicial
+
+Visualización de retornos y drawdown
+
+🔹 Carpeta scripts/
+risk_modeling.py → script principal (como el de arriba)
+
+🔹 Carpeta docs/
+README.md → descripción del proyecto
+
+methodology.pdf → resumen de métricas y fuentes
