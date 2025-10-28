@@ -31,3 +31,9 @@ This is because this project is not using the cluster system of YARN. If needed,
 *   Explore the existing code and modify it to suit your needs.
 *   Add new Spark functionalities and features.
 *   Consider deploying the project to a local Spark environment.
+
+
+This project is designed to explore Market Risk Modeling techniques using Apache Spark.  
+It uses historical financial data from the EURO STOXX 50 index, stored in Parquet format for efficient processing.  
+Main dataset:  
+- `euro_stoxx50.parquet`
