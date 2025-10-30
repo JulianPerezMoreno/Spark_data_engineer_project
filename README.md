@@ -35,5 +35,9 @@ This is because this project is not using the cluster system of YARN. If needed,
 
 This project is designed to explore Market Risk Modeling techniques using Apache Spark.  
 It uses historical financial data from the EURO STOXX 50 index, stored in Parquet format for efficient processing.  
+GDP from european countries (Export the dataframe containing cleaned data on Gross Domestic Product (GDP) and its main components (output, expenditure, and income) in Parquet format).
+Tasas de interés de referencia del Banco Central Europeo (BCE)
 Main dataset:  
 - `euro_stoxx50.parquet`
+- 'GDP_and_main_components.parquet'
+Key_ECB_interest_rates.pdf y Interest_rate_statistics(2004_EU_Member_States_&_ACCBs)(39).csv
